@@ -1,12 +1,32 @@
 import useSWR, { mutate } from "swr";
 import { Todo } from "./types";
+import { Card, CardMethod } from "./types";
 
 const fetcher = (input: RequestInfo, init?: RequestInit) =>
   fetch(input, init).then((res) => res.json());
 
 const todoPath = "/api/todos";
+const cardPath = "/api/card";
+const testPath = "/api/test";
 
 export const useTodos = () => useSWR<Todo[]>(todoPath, fetcher);
+
+export const useCard = () => useSWR<Card>(cardPath, fetcher);
+
+export const useTests = () => useSWR<any[]>(testPath, fetcher);
+
+export const scoreCard = async (card_id: number) => {
+  return await fetch(cardPath, {
+    method: "POST",
+    body: JSON.stringify({ type: CardMethod.score, card_id }),
+  }).then((res) => res.json());
+}
+
+export const nextCard = async () => {
+  return await fetch(cardPath, {
+    method: "GET",
+  }).then((res) => res.json());
+}
 
 export const createTodo = async (text: string) => {
   mutate(

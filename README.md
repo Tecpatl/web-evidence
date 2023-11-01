@@ -2,7 +2,9 @@
 
 ## Purpose
 
-web版本的[evidence](https://github.com/Tecpatl/nvim-evidence)
+web版本 [evidence](https://github.com/Tecpatl/nvim-evidence)
+
+对卡片以展示为主， 读 > 写
 
 ## Reference
 
@@ -14,3 +16,24 @@ web版本的[evidence](https://github.com/Tecpatl/nvim-evidence)
 
 node>=18
 
+## Todo
+
+[x] 字体修改
+
+[x] 代码高亮
+
+[ ] 打分
+
+[ ] 查询
+
+[ ] 夜间模式
+
+[ ] 多选分支
+
+[ ] rand,new,review三种模式ratio
+
+[ ] 分支修改ratio
+
+[ ] 搜索框 ， 命令？
+
+[ ] 插入mark_id

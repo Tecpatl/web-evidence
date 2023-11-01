@@ -5,6 +5,11 @@ const prisma = new PrismaClient();
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === "GET") {
+    //const test = await prisma.card.findMany({ skip: 0, take: 7 });
+    // const test = await prisma.$queryRaw`select * from card where id=7`;
+    // console.log(test)
+
+    console.log("api todo")
     // get all todos
     const todos = await prisma.todo.findMany({
       orderBy: { createdAt: "desc" },
