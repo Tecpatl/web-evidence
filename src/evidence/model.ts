@@ -1,13 +1,16 @@
 import { Card, TagField, NextCardRatioField, NextCardMode } from "../types";
 import Table from "./table";
 import { getValArrayFromItem, randomNum } from "../tool";
+import { FSRS as _FSRS_, Params as _Params_, Card as _Card_ } from "./fsrs";
 
 export default class Model {
-  constructor() { }
-
-  test = async()=>{
-    return await this.tbl.test()
+  constructor(param?: _Params_) {
+    this.parameter_ = param ? param : new _Params_();
   }
+
+  test = async () => {
+    return await this.tbl.test();
+  };
 
   findSonTags = async (tag_id: number): Promise<TagField[]> => {
     return await this.tbl.findTag(-1, "father_id=" + tag_id.toString());
@@ -160,5 +163,39 @@ export default class Model {
     return Array.from(res);
   };
 
+  getFsrs = () => {
+    return new _FSRS_(this.parameter_);
+  };
+
+  scoreCard = async (card_id, mark_id, rating): Promise<void> => {
+    const fsrs_items = await this.tbl.findFsrsByCardMark(card_id, mark_id);
+    if (!fsrs_items || fsrs_items.length == 0) {
+      throw "ratingCard mark not exist";
+    }
+    const fsrs_item = fsrs_items[0];
+
+    const fsrs = this.getFsrs();
+
+    const now_time = new Date().getTime();
+
+    const data = JSON.parse(fsrs_item.info);
+
+    const new_card = fsrs.repeat(
+      new _Card_(data as _Card_),
+      new Date(now_time),
+    )[rating].card;
+
+    const due = new_card.due;
+    const info = JSON.stringify(new_card);
+
+    await this.tbl.editFsrs(card_id, mark_id, {
+      due: due.getTime(),
+      info,
+    });
+    //todo:
+    // this.tbl.insertRecordCard(id, tblInfo.AccessWay.score);
+  };
+
   private tbl = new Table();
+  private parameter_: _Params_;
 }

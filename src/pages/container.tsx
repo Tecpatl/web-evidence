@@ -4,7 +4,10 @@ import remarkGfm from "remark-gfm";
 import { nextCard, scoreCard } from "../api";
 import type { MenuProps } from 'antd';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
-import { Button, Dropdown, FloatButton } from 'antd';
+import {
+    InputNumber, Space,
+    Modal, Button, Dropdown, FloatButton, Radio, Form
+} from 'antd';
 
 
 export default memo(function ContainerView() {
@@ -13,6 +16,7 @@ export default memo(function ContainerView() {
     const [codeStyle, setCodeStyle] = useState({})
     const fontSizeList = [20, 30, 40]
     const [fontSizeIndex, setfontSizeIndex] = useState<number>(1)
+    const [isScoreModalOpen, setIsScoreModalOpen] = useState(false);
 
     useEffect(() => {
         import('react-syntax-highlighter/dist/esm/styles/prism/material-dark')
@@ -55,8 +59,9 @@ export default memo(function ContainerView() {
             key: 'scoreCard',
             label: (
                 <Button type="primary" onClick={async () => {
-                    await scoreCard(cardId);
-                    freshNextCard()
+                    if (cardId != -1) {
+                        setIsScoreModalOpen(true);
+                    }
                 }}>
                     scoreCard
                 </Button>
@@ -72,6 +77,65 @@ export default memo(function ContainerView() {
         },
     ];
 
+    const formItemLayout = {
+        labelCol: { span: 6 },
+        wrapperCol: { span: 14 },
+    };
+
+    const ScoreModelView = () => {
+        return (
+            <Modal title="ScoreCard" open={isScoreModalOpen}
+                onCancel={() => {
+                    setIsScoreModalOpen(false)
+                }}
+                footer={[]}
+            >
+                <Form
+                    name="validate_other"
+                    {...formItemLayout}
+                    onFinish={async (values: { mark_id: number, rating: number }) => {
+                        setIsScoreModalOpen(false)
+                        await scoreCard({ card_id: cardId, mark_id: values.mark_id, rating: values.rating });
+                        freshNextCard()
+                    }}
+                    initialValues={{
+                        'mark_id': 0,
+                        'rating': 0,
+                    }}
+                    style={{ maxWidth: 600 }}
+                >
+                    <Form.Item label="mark_id">
+                        <Form.Item name="mark_id">
+                            <InputNumber min={0} />
+                        </Form.Item>
+                    </Form.Item>
+                    <Form.Item
+                        name="rating"
+                        label="rating"
+                        rules={[{ required: true, message: 'Please pick an item!' }]}
+                    >
+                        <Radio.Group>
+                            <Radio.Button value={0}>0</Radio.Button>
+                            <Radio.Button value={1}>1</Radio.Button>
+                            <Radio.Button value={2}>2</Radio.Button>
+                            <Radio.Button value={3}>3</Radio.Button>
+                        </Radio.Group>
+                    </Form.Item>
+
+                    <Form.Item>
+                        <Space>
+                            <Button type="primary" htmlType="submit">
+                                Submit
+                            </Button>
+                            <Button htmlType="reset">reset</Button>
+                        </Space>
+                    </Form.Item>
+                </Form>
+
+            </Modal>
+        )
+    }
+
     return (
         <div>
             <div style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 1000 }}>
@@ -84,7 +148,8 @@ export default memo(function ContainerView() {
                     <Button>Right</Button>
                 </Dropdown>
             </div>
-            <FloatButton.BackTop visibilityHeight={1000}/>
+            <ScoreModelView />
+            <FloatButton.BackTop visibilityHeight={1000} />
             <div style={{ maxHeight: '100%', overflowY: 'auto', padding: '10px', wordWrap: 'break-word', fontSize: fontSizeList[fontSizeIndex] }}>
                 {
                     content ?

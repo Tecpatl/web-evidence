@@ -38,5 +38,19 @@ export interface NextCardRatioField {
 export enum CardMethod {
   score = 0,
   next,
-  fresh
+  fresh,
+}
+
+export interface ScoreCardParam {
+  card_id: number;
+  mark_id: number;
+  rating: number;
+}
+
+export interface FsrsField {
+  id: number;
+  card_id: number;
+  mark_id: number;
+  due: number;
+  info: string;
 }

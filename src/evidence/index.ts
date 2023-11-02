@@ -23,8 +23,12 @@ export default class Evidence {
   }
 
   test = async () => {
-    return await this.model.test()
-  }
+    return await this.model.test();
+  };
+
+  scoreCard = async (card_id, mark_id, rating): Promise<void> => {
+    return await this.model.scoreCard(card_id, mark_id, rating);
+  };
 
   nextCard = async (): Promise<Card | undefined> => {
     //todo user select tag

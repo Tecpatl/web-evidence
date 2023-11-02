@@ -1,14 +1,31 @@
 import { PrismaClient } from "@prisma/client";
-import { Card, TagField, NextCardRatioField, NextCardMode } from "../types";
+import {
+  Card,
+  TagField,
+  NextCardRatioField,
+  NextCardMode,
+  FsrsField,
+} from "../types";
 
 export default class Table {
-  constructor(){
-
-  }
+  constructor() { }
   test = async () => {
-    return await this.prisma.$queryRaw`SELECT * FROM tag where father_id=-1 ORDER BY timestamp DESC`
-  }
+    const cards = await this.prisma
+      .$queryRaw`SELECT * FROM card where id=4273`;
+    const fsrs = await this.prisma
+      .$queryRaw`SELECT * FROM fsrs where card_id=4273`;
+    console.log(fsrs)
+    return cards ? cards[0] : undefined
+  };
 
+  findFsrsByCardMark = async (
+    card_id: number,
+    mark_id: number,
+  ): Promise<FsrsField[]> => {
+    const query =
+      "SELECT * FROM fsrs where card_id=" + card_id + " and mark_id=" + mark_id;
+    return await this.prisma.$queryRawUnsafe(query);
+  };
 
   findTag = async (
     limit_num?: number,
@@ -74,6 +91,26 @@ export default class Table {
         limit_num.toString();
     }
     return await this.prisma.$queryRawUnsafe(query);
+  };
+
+  editFsrs = async (
+    card_id: number,
+    mark_id: number,
+    row: Partial<FsrsField>,
+  ) => {
+    return await this.prisma.fsrs.updateMany({
+      where: { card_id, mark_id },
+      data: row,
+    });
+  };
+
+  editCard = async (card_id: number, row: Partial<Card>) => {
+    //todo insertRecordCard
+    row["id"] = undefined;
+    return await this.prisma.card.update({
+      where: { id: card_id },
+      data: row,
+    });
   };
 
   private prisma = new PrismaClient();

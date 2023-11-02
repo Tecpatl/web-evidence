@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { Card, CardMethod } from "../../types";
+import { Card, CardMethod, ScoreCardParam } from "../../types";
 import Evidence from "../../evidence";
 
 const Evi = new Evidence();
@@ -8,16 +8,26 @@ const Evi = new Evidence();
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === "GET") {
-    const card = await Evi.nextCard();
+    // const card = await Evi.nextCard();
+    const card = await Evi.test();
+    // console.log(card)
     res.json({ card, is_ok: card ? true : false });
   } else if (req.method === "POST") {
-    const data = JSON.parse(req.body)
+    const data = JSON.parse(req.body);
     switch (data.type as CardMethod) {
-      case CardMethod.score: {
-
-    // res.json({ status: 234 });
-        break
-      }
+      case CardMethod.score:
+        {
+          const param = data.param as ScoreCardParam;
+          const card_id = param.card_id;
+          const mark_id = param.mark_id;
+          const rating = param.rating;
+          console.log("oyjy")
+          console.log(param)
+          await Evi.scoreCard(card_id, mark_id, rating);
+          res.json({ is_ok: true });
+          break;
+        }
+        res.json({ is_ok: false });
     }
   }
   //} else if (req.method === "PUT") {

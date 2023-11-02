@@ -1,5 +1,5 @@
-import deepcopy from "deepcopy";
-
+//https://github.com/open-spaced-repetition
+//https://github.com/open-spaced-repetition/fsrs.js/tree/master
 export enum State {
   New = 0,
   Learning = 1,
@@ -45,27 +45,27 @@ export class Card {
   lapses: number;
   state: State;
   last_review: Date;
-  constructor() {
-    this.due = new Date();
-    this.stability = 0;
-    this.difficulty = 0;
-    this.elapsed_days = 0;
-    this.scheduled_days = 0;
-    this.reps = 0;
-    this.lapses = 0;
-    this.state = State.New;
-    this.last_review = new Date();
-  }
-
-  get_retrievability(now: Date): number | null {
-    if (this.state === State.Review) {
-      let elapsed_days = Math.max(
-        0,
-        Math.floor((now.getTime() - this.last_review.getTime()) / 86400000),
-      );
-      return Math.exp((Math.log(0.9) * elapsed_days) / this.stability);
+  constructor(data?: Card) {
+    if (data) {
+      this.due = data.due;
+      this.stability = data.stability;
+      this.difficulty = data.difficulty;
+      this.elapsed_days = data.elapsed_days;
+      this.scheduled_days = data.scheduled_days;
+      this.reps = data.reps;
+      this.lapses = data.lapses;
+      this.state = data.state;
+      this.last_review = new Date(data.last_review);
     } else {
-      return null;
+      this.due = new Date();
+      this.stability = 0;
+      this.difficulty = 0;
+      this.elapsed_days = 0;
+      this.scheduled_days = 0;
+      this.reps = 0;
+      this.lapses = 0;
+      this.state = State.New;
+      this.last_review = new Date();
     }
   }
 }
@@ -87,10 +87,10 @@ class SchedulingCards {
   easy: Card;
 
   constructor(card: Card) {
-    this.again = deepcopy(card);
-    this.hard = deepcopy(card);
-    this.good = deepcopy(card);
-    this.easy = deepcopy(card);
+    this.again = { ...card };
+    this.hard = { ...card };
+    this.good = { ...card };
+    this.easy = { ...card };
   }
 
   update_state(state: State) {
@@ -187,7 +187,7 @@ class SchedulingCards {
   }
 }
 
-class Params {
+export class Params {
   request_retention: number;
   maximum_interval: number;
   w: Array<number>;
@@ -204,11 +204,11 @@ class Params {
 
 export class FSRS {
   p: Params;
-  constructor() {
-    this.p = new Params();
+  constructor(param?: Params) {
+    this.p = param ? param : new Params();
   }
   repeat(card: Card, now: Date): Record<number, SchedulingInfo> {
-    card = deepcopy(card);
+    card = { ...card };
     if (card.state === State.New) {
       card.elapsed_days = 0;
     } else {
