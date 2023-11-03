@@ -1,12 +1,26 @@
 import { NextPage } from "next";
 import Head from "next/head";
-import { useMemo, useState } from "react";
+import { useState, memo, useEffect, useCallback } from "react";
 import { createTodo, deleteTodo, toggleTodo, useTodos } from "../api";
 import styles from "../styles/Home.module.css";
 import { Todo } from "../types";
+import { useCard, useTests } from "../api";
+import ContainerView from "./container";
+
+
+const TestPage = () => {
+  const { data: tests, error } = useTests();
+  console.log(tests)
+  return (
+    <div>
+      sdf
+    </div>
+  )
+}
 
 export const TodoList: React.FC = () => {
   const { data: todos, error } = useTodos();
+  console.log("1")
 
   if (error != null) return <div>Error loading todos...</div>;
   if (todos == null) return <div>Loading...</div>;
@@ -14,11 +28,10 @@ export const TodoList: React.FC = () => {
   if (todos.length === 0) {
     return <div className={styles.emptyState}>Try adding a todo ☝️️</div>;
   }
-
   return (
     <ul className={styles.todoList}>
-      {todos.map(todo => (
-        <TodoItem todo={todo} />
+      {todos.map((todo, key) => (
+        <TodoItem key={key} todo={todo} />
       ))}
     </ul>
   );
@@ -49,7 +62,7 @@ const AddTodoInput = () => {
 
   return (
     <form
-      onSubmit={async e => {
+      onSubmit={async (e) => {
         e.preventDefault();
         createTodo(text);
         setText("");
@@ -60,7 +73,7 @@ const AddTodoInput = () => {
         className={styles.input}
         placeholder="Buy some milk"
         value={text}
-        onChange={e => setText(e.target.value)}
+        onChange={(e) => setText(e.target.value)}
       />
       <button className={styles.addButton}>Add</button>
     </form>
@@ -68,26 +81,19 @@ const AddTodoInput = () => {
 };
 
 const Home: NextPage = () => {
+  useEffect(() => {
+    console.log("init")
+    return () => {
+      console.log("destroy")
+    }
+  }, [])
   return (
-    <div className={styles.container}>
-      <Head>
-        <title>Railway NextJS Prisma</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-
-      <header className={styles.header}>
-        <h1 className={styles.title}>Todos</h1>
-        <h2 className={styles.desc}>
-          NextJS app connected to Postgres using Prisma and hosted on{" "}
-          <a href="https://railway.app">Railway</a>
-        </h2>
-      </header>
-
-      <main className={styles.main}>
-        <AddTodoInput />
-
-        <TodoList />
-      </main>
+    <div>
+        <ContainerView/>
+        {/* <MarkdownPage /> */}
+        {/* <TestPage/> */}
+        {/* <AddTodoInput /> */}
+        {/* <TodoList /> */}
     </div>
   );
 };

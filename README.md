@@ -2,15 +2,38 @@
 
 ## Purpose
 
-web版本的[evidence](https://github.com/Tecpatl/nvim-evidence)
+web版本 [evidence](https://github.com/Tecpatl/nvim-evidence)
+
+对卡片以展示为主， 读 > 写
 
 ## Reference
 
 [NextJS Prisma Template](https://github.com/railwayapp-templates/nextjs-prisma.git)
 
-[free-spaced-repetition-scheduler](https://github.com/open-spaced-repetition/free-spaced-repetition-scheduler)
+[free-spaced-repetition-scheduler v4](https://github.com/open-spaced-repetition/free-spaced-repetition-scheduler)
 
 ## Require
 
 node>=18
 
+## Todo
+
+[x] 字体修改
+
+[x] 代码高亮
+
+[x] 打分
+
+[x] 查询
+
+[ ] 多选分支
+
+[ ] rand,new,review三种模式ratio
+
+[ ] 分支修改ratio
+
+[ ] 搜索框命令？
+
+[ ] 插入mark_id
+
+[ ] 夜间模式

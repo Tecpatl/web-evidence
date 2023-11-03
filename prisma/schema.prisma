@@ -3,7 +3,7 @@
 
 datasource db {
   provider = "sqlite"
-  url      = "file:./dev.db"
+  url      = "file:./test.db"
 }
 
 generator client {
@@ -15,4 +15,48 @@ model Todo {
   createdAt DateTime @default(now())
   text      String
   completed Boolean
+}
+
+model card {
+  id        Int    @id @default(autoincrement())
+  content   String
+  file_type String
+  fsrsFrom      fsrs[]
+  cardTagFrom      card_tag[]
+}
+
+model fsrs {
+  card_id  Int
+  mark_id  Int
+  due      Int
+  info     String
+  @@id([card_id, mark_id])
+  cardFrom card   @relation(fields: [card_id], references: [id], onDelete: Cascade)
+}
+
+model tag {
+  id        Int    @id @default(autoincrement())
+  name      String @unique
+  father_id Int    @default(-1)
+  timestamp Int    @default(0)
+  weight    Int    @default(1)
+  cardTagFrom      card_tag[]
+}
+
+
+model card_tag {
+  tag_id       Int    
+  card_id      Int 
+  @@id([card_id, tag_id])
+  cardFrom card   @relation(fields: [card_id], references: [id], onDelete: Cascade)
+  tagFrom  tag   @relation(fields: [tag_id], references: [id], onDelete: Cascade)
+}
+
+model record_card {
+  id        Int    @id @default(autoincrement())
+  card_id   Int
+  content   String
+  file_type String
+  timestamp Int
+  access_way Int 
 }
