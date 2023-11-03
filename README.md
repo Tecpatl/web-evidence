@@ -10,7 +10,7 @@ web版本 [evidence](https://github.com/Tecpatl/nvim-evidence)
 
 [NextJS Prisma Template](https://github.com/railwayapp-templates/nextjs-prisma.git)
 
-[free-spaced-repetition-scheduler](https://github.com/open-spaced-repetition/free-spaced-repetition-scheduler)
+[free-spaced-repetition-scheduler v4](https://github.com/open-spaced-repetition/free-spaced-repetition-scheduler)
 
 ## Require
 
@@ -22,7 +22,7 @@ node>=18
 
 [x] 代码高亮
 
-[ ] 打分
+[x] 打分
 
 [ ] 查询
 

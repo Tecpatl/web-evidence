@@ -100,7 +100,7 @@ export default memo(function ContainerView() {
                     }}
                     initialValues={{
                         'mark_id': 0,
-                        'rating': 0,
+                        'rating': 2,
                     }}
                     style={{ maxWidth: 600 }}
                 >
@@ -115,10 +115,10 @@ export default memo(function ContainerView() {
                         rules={[{ required: true, message: 'Please pick an item!' }]}
                     >
                         <Radio.Group>
-                            <Radio.Button value={0}>0</Radio.Button>
-                            <Radio.Button value={1}>1</Radio.Button>
-                            <Radio.Button value={2}>2</Radio.Button>
-                            <Radio.Button value={3}>3</Radio.Button>
+                            <Radio.Button value={1}>Again</Radio.Button>
+                            <Radio.Button value={2}>Hard</Radio.Button>
+                            <Radio.Button value={3}>Good</Radio.Button>
+                            <Radio.Button value={4}>Easy</Radio.Button>
                         </Radio.Group>
                     </Form.Item>
 

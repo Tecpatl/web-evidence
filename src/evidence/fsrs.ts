@@ -207,7 +207,7 @@ export class FSRS {
   constructor(param?: Params) {
     this.p = param ? param : new Params();
   }
-  repeat(card: Card, now: Date): Record<number, SchedulingInfo> {
+  repeats(card: Card, now: Date): Record<number, SchedulingInfo> {
     card = { ...card };
     if (card.state === State.New) {
       card.elapsed_days = 0;

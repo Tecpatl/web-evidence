@@ -8,8 +8,8 @@ const Evi = new Evidence();
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === "GET") {
-    // const card = await Evi.nextCard();
-    const card = await Evi.test();
+    const card = await Evi.nextCard();
+    // const card = await Evi.test();
     // console.log(card)
     res.json({ card, is_ok: card ? true : false });
   } else if (req.method === "POST") {
@@ -21,8 +21,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           const card_id = param.card_id;
           const mark_id = param.mark_id;
           const rating = param.rating;
-          console.log("oyjy")
-          console.log(param)
+          // console.log("oyjy")
+          // console.log(param)
           await Evi.scoreCard(card_id, mark_id, rating);
           res.json({ is_ok: true });
           break;

@@ -167,6 +167,15 @@ export default class Model {
     return new _FSRS_(this.parameter_);
   };
 
+  formatData = (d: Date) => {
+    return [d.getMonth() + 1,
+    d.getDate(),
+    d.getFullYear()].join('/') + ' ' +
+      [d.getHours(),
+      d.getMinutes(),
+      d.getSeconds()].join(':');
+  }
+
   scoreCard = async (card_id, mark_id, rating): Promise<void> => {
     const fsrs_items = await this.tbl.findFsrsByCardMark(card_id, mark_id);
     if (!fsrs_items || fsrs_items.length == 0) {
@@ -178,18 +187,21 @@ export default class Model {
 
     const now_time = new Date().getTime();
 
-    const data = JSON.parse(fsrs_item.info);
+    const data = JSON.parse(fsrs_item.info)
+    data.due *= 1000 // adapt lua timestamp
 
-    const new_card = fsrs.repeat(
+    const new_card = fsrs.repeats(
       new _Card_(data as _Card_),
       new Date(now_time),
     )[rating].card;
 
     const due = new_card.due;
-    const info = JSON.stringify(new_card);
+    const last_review = new_card.last_review;
+    const full_card = { ...new_card, due: Math.round(due.getTime() / 1000), last_review: Math.round(last_review.getTime() / 1000), last_review_date: this.formatData(last_review), due_date: this.formatData(new_card.due) }
+    const info = JSON.stringify(full_card);
 
     await this.tbl.editFsrs(card_id, mark_id, {
-      due: due.getTime(),
+      due: Math.round(due.getTime() / 1000),  // adapt lua timestamp
       info,
     });
     //todo:
