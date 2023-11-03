@@ -54,6 +54,11 @@ export default class Evidence {
     }
   };
 
+  searchCard = async (content: string, lim?: number): Promise<Card[]> => {
+    const cards = await this.model.fuzzyFindCard(content, lim);
+    return cards ? cards : [];
+  };
+
   private next_card_ratio: NextCardRatioField[];
   private model = new Model();
 }

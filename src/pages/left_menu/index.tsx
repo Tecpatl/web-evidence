@@ -1,5 +1,5 @@
 import { useState, memo, useEffect, useCallback } from "react";
-import { nextCard, scoreCard } from "../api";
+import { nextCard, scoreCard } from "../../api";
 import {
   InputNumber,
   Space,
@@ -11,11 +11,14 @@ import {
   Form,
 } from "antd";
 import type { MenuProps } from "antd";
-import ScoreCardlView from "./score";
+import ScoreCardlView from "./scoreCard";
+import SearchCardlView from "./searchCard";
+import { Card } from "../../types";
 
 interface LeftMenuProps {
   card_id: number;
   fresh_next_card_foo: () => void;
+  replace_card_foo: (card: Card) => void;
 }
 
 export default memo(function LeftMenuView(props: LeftMenuProps) {
@@ -47,6 +50,10 @@ export default memo(function LeftMenuView(props: LeftMenuProps) {
           nextCard
         </Button>
       ),
+    },
+    {
+      key: "searchCard",
+      label: <SearchCardlView replace_card_foo={props.replace_card_foo} />,
     },
   ];
 

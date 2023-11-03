@@ -168,13 +168,12 @@ export default class Model {
   };
 
   formatData = (d: Date) => {
-    return [d.getMonth() + 1,
-    d.getDate(),
-    d.getFullYear()].join('/') + ' ' +
-      [d.getHours(),
-      d.getMinutes(),
-      d.getSeconds()].join(':');
-  }
+    return (
+      [d.getMonth() + 1, d.getDate(), d.getFullYear()].join("/") +
+      " " +
+      [d.getHours(), d.getMinutes(), d.getSeconds()].join(":")
+    );
+  };
 
   scoreCard = async (card_id, mark_id, rating): Promise<void> => {
     const fsrs_items = await this.tbl.findFsrsByCardMark(card_id, mark_id);
@@ -187,8 +186,8 @@ export default class Model {
 
     const now_time = new Date().getTime();
 
-    const data = JSON.parse(fsrs_item.info)
-    data.due *= 1000 // adapt lua timestamp
+    const data = JSON.parse(fsrs_item.info);
+    data.due *= 1000; // adapt lua timestamp
 
     const new_card = fsrs.repeats(
       new _Card_(data as _Card_),
@@ -197,15 +196,32 @@ export default class Model {
 
     const due = new_card.due;
     const last_review = new_card.last_review;
-    const full_card = { ...new_card, due: Math.round(due.getTime() / 1000), last_review: Math.round(last_review.getTime() / 1000), last_review_date: this.formatData(last_review), due_date: this.formatData(new_card.due) }
+    const full_card = {
+      ...new_card,
+      due: Math.round(due.getTime() / 1000),
+      last_review: Math.round(last_review.getTime() / 1000),
+      last_review_date: this.formatData(last_review),
+      due_date: this.formatData(new_card.due),
+    };
     const info = JSON.stringify(full_card);
 
     await this.tbl.editFsrs(card_id, mark_id, {
-      due: Math.round(due.getTime() / 1000),  // adapt lua timestamp
+      due: Math.round(due.getTime() / 1000), // adapt lua timestamp
       info,
     });
     //todo:
     // this.tbl.insertRecordCard(id, tblInfo.AccessWay.score);
+  };
+
+  fuzzyFindCard = async (content: string, lim?: number): Promise<Card[]> => {
+    const limit = lim ? lim : 10;
+    let item;
+    if (content != "") {
+      item = await this.tbl.findCard(limit, "content like '%" + content + "%'");
+    } else {
+      item = await this.tbl.findCard(limit);
+    }
+    return item;
   };
 
   private tbl = new Table();

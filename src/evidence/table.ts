@@ -10,12 +10,11 @@ import {
 export default class Table {
   constructor() { }
   test = async () => {
-    const cards = await this.prisma
-      .$queryRaw`SELECT * FROM card where id=4273`;
+    const cards = await this.prisma.$queryRaw`SELECT * FROM card where id=4273`;
     const fsrs = await this.prisma
       .$queryRaw`SELECT * FROM fsrs where card_id=4273`;
-    console.log(fsrs)
-    return cards ? cards[0] : undefined
+    console.log(fsrs);
+    return cards ? cards[0] : undefined;
   };
 
   findFsrsByCardMark = async (
@@ -111,6 +110,24 @@ export default class Table {
       where: { id: card_id },
       data: row,
     });
+  };
+
+  findCard = async (
+    limit_num?: number,
+    statement?: string,
+    is_shuffle?: boolean,
+  ): Promise<Card[]> => {
+    let query = "SELECT * FROM card as c";
+    if (statement && statement != "") {
+      query += " where " + statement;
+    }
+    if (is_shuffle == true) {
+      query += " order by random()%1000 ";
+    }
+    if (limit_num && limit_num != -1) {
+      query += " LIMIT " + limit_num;
+    }
+    return await this.prisma.$queryRawUnsafe(query);
   };
 
   private prisma = new PrismaClient();

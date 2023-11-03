@@ -15,6 +15,13 @@ export const useCard = () => useSWR<Card>(cardPath, fetcher);
 
 export const useTests = () => useSWR<any[]>(testPath, fetcher);
 
+export const searchCard = async (keyword:string) => {
+  return await fetch(cardPath, {
+    method: "POST",
+    body: JSON.stringify({ type: CardMethod.search, keyword }),
+  }).then((res) => res.json());
+}
+
 export const scoreCard = async (param: ScoreCardParam) => {
   return await fetch(cardPath, {
     method: "POST",

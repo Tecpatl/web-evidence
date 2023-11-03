@@ -39,6 +39,7 @@ export enum CardMethod {
   score = 0,
   next,
   fresh,
+  search,
 }
 
 export interface ScoreCardParam {

@@ -15,20 +15,24 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   } else if (req.method === "POST") {
     const data = JSON.parse(req.body);
     switch (data.type as CardMethod) {
-      case CardMethod.score:
-        {
-          const param = data.param as ScoreCardParam;
-          const card_id = param.card_id;
-          const mark_id = param.mark_id;
-          const rating = param.rating;
-          // console.log("oyjy")
-          // console.log(param)
-          await Evi.scoreCard(card_id, mark_id, rating);
-          res.json({ is_ok: true });
-          break;
-        }
-        res.json({ is_ok: false });
+      case CardMethod.search: {
+        const cards = await Evi.searchCard(data.keyword);
+        res.json({ cards, is_ok: true });
+        return;
+      }
+      case CardMethod.score: {
+        const param = data.param as ScoreCardParam;
+        const card_id = param.card_id;
+        const mark_id = param.mark_id;
+        const rating = param.rating;
+        // console.log("oyjy")
+        // console.log(param)
+        await Evi.scoreCard(card_id, mark_id, rating);
+        res.json({ is_ok: true });
+        return;
+      }
     }
+    res.json({ is_ok: false });
   }
   //} else if (req.method === "PUT") {
   //  // update todo
