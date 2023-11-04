@@ -8,13 +8,50 @@ const Evi = new Evidence();
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === "GET") {
-    const card = await Evi.nextCard();
+    const card = await Evi.findNextCard();
     // const card = await Evi.test();
-    // console.log(card)
-    res.json({ card, is_ok: card ? true : false });
+    let fsrs_item;
+    if (card && card.id) {
+      fsrs_item = await Evi.jumpMinDueFsrs(card.id);
+    }
+    // res.json({ card, fsrs_item: { mark_id: 1 }, is_ok: card ? true : false });
+    res.json({ card, fsrs_item, is_ok: card ? true : false });
   } else if (req.method === "POST") {
     const data = JSON.parse(req.body);
     switch (data.type as CardMethod) {
+      case CardMethod.addMarkId: {
+        if (!data.card_id || !data.mark_id || !data.content) {
+          res.json({ is_ok: false });
+          return
+        }
+        await Evi.addMarkId(data.card_id, data.mark_id, data.content);
+        res.json({ is_ok: true });
+        return;
+      }
+      case CardMethod.infoCard: {
+        if (!data.card_id) {
+          res.json({ is_ok: false });
+          return
+        }
+        const info = await Evi.getInfoCard(data.card_id);
+        res.json({ info, is_ok: true });
+        return;
+      }
+      case CardMethod.findCardById: {
+        // const card = await Evi.test();
+        const card = await Evi.findCardById(data.card_id);
+        let fsrs_item;
+        if (card && card.id) {
+          fsrs_item = await Evi.jumpMinDueFsrs(card.id);
+        }
+        res.json({ card, fsrs_item, is_ok: true });
+        // res.json({
+        //   card,
+        //   fsrs_item: { mark_id: 1 },
+        //   is_ok: card ? true : false,
+        // });
+        return;
+      }
       case CardMethod.search: {
         const cards = await Evi.searchCard(data.keyword);
         res.json({ cards, is_ok: true });

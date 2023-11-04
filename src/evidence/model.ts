@@ -1,4 +1,10 @@
-import { Card, TagField, NextCardRatioField, NextCardMode } from "../types";
+import {
+  Card,
+  TagField,
+  NextCardRatioField,
+  NextCardMode,
+  FsrsField,
+} from "../types";
 import Table from "./table";
 import { getValArrayFromItem, randomNum } from "../tool";
 import { FSRS as _FSRS_, Params as _Params_, Card as _Card_ } from "./fsrs";
@@ -18,6 +24,14 @@ export default class Model {
 
   getIdsFromItem = (items): number[] => {
     return getValArrayFromItem(items, "id");
+  };
+
+  findAllFsrsByCard = async (card_id: number): Promise<FsrsField[]> => {
+    return await this.tbl.findAllFsrsByCard(card_id);
+  };
+
+  findsTagByCardId = async (card_id: number): Promise<TagField[]> => {
+    return await this.tbl.findsTagByCardId(card_id);
   };
 
   findTagByIds = async (tag_ids: number[]): Promise<TagField[]> => {
@@ -167,12 +181,15 @@ export default class Model {
     return new _FSRS_(this.parameter_);
   };
 
-  formatData = (d: Date) => {
-    return (
-      [d.getMonth() + 1, d.getDate(), d.getFullYear()].join("/") +
-      " " +
-      [d.getHours(), d.getMinutes(), d.getSeconds()].join(":")
-    );
+  findCardById = async (card_id: number): Promise<Card | undefined> => {
+    const item = await this.tbl.findCard(1, "id=" + card_id);
+    if (item && item.length > 0) {
+      return item[0];
+    }
+  };
+
+  jumpMinDueFsrs = async (card_id: number): Promise<FsrsField[]> => {
+    return await this.tbl.jumpMinDueFsrs(card_id);
   };
 
   scoreCard = async (card_id, mark_id, rating): Promise<void> => {
@@ -195,15 +212,7 @@ export default class Model {
     )[rating].card;
 
     const due = new_card.due;
-    const last_review = new_card.last_review;
-    const full_card = {
-      ...new_card,
-      due: Math.round(due.getTime() / 1000),
-      last_review: Math.round(last_review.getTime() / 1000),
-      last_review_date: this.formatData(last_review),
-      due_date: this.formatData(new_card.due),
-    };
-    const info = JSON.stringify(full_card);
+    const info = new_card.getFullInfoStr();
 
     await this.tbl.editFsrs(card_id, mark_id, {
       due: Math.round(due.getTime() / 1000), // adapt lua timestamp
@@ -223,6 +232,16 @@ export default class Model {
     }
     return item;
   };
+
+  addMarkId = async (card_id: number, mark_id: number): Promise<void> => {
+    const card = new _Card_();
+    const info = card.getFullInfoStr();
+    await this.tbl.addMarkId(card_id, mark_id, Math.round(card.due.getTime() / 1000), info)
+  }
+
+  editCardContent = async (card_id: number, content: string): Promise<void> => {
+    this.tbl.editCard(card_id, { content })
+  }
 
   private tbl = new Table();
   private parameter_: _Params_;

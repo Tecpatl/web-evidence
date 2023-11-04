@@ -1,5 +1,12 @@
 import Model from "./model";
-import { Card, TagField, NextCardRatioField, NextCardMode } from "../types";
+import {
+  Card,
+  TagField,
+  NextCardRatioField,
+  NextCardMode,
+  FsrsField,
+  InfoCardField,
+} from "../types";
 
 export default class Evidence {
   constructor() {
@@ -26,11 +33,33 @@ export default class Evidence {
     return await this.model.test();
   };
 
+  addMarkId = async (card_id: number, mark_id: number, content: string) => {
+    await this.model.addMarkId(card_id, mark_id)
+    await this.model.editCardContent(card_id, content)
+  }
+
+  getInfoCard = async (card_id: number): Promise<InfoCardField> => {
+    const fsrs_items = await this.model.findAllFsrsByCard(card_id);
+    const tags = await this.model.findsTagByCardId(card_id);
+    return { fsrs_items, tags };
+  };
+
   scoreCard = async (card_id, mark_id, rating): Promise<void> => {
     return await this.model.scoreCard(card_id, mark_id, rating);
   };
 
-  nextCard = async (): Promise<Card | undefined> => {
+  jumpMinDueFsrs = async (card_id: number): Promise<FsrsField | undefined> => {
+    const fsrs_items = await this.model.jumpMinDueFsrs(card_id);
+    if (fsrs_items && fsrs_items.length > 0) {
+      return fsrs_items[0];
+    }
+  };
+
+  findCardById = async (card_id: number): Promise<Card | undefined> => {
+    return await this.model.findCardById(card_id);
+  };
+
+  findNextCard = async (): Promise<Card | undefined> => {
     //todo user select tag
     let now_select_tags = [];
     let items;

@@ -68,6 +68,31 @@ export class Card {
       this.last_review = new Date();
     }
   }
+
+  formatData = (d: Date): string => {
+    return (
+      [d.getMonth() + 1, d.getDate(), d.getFullYear()].join("/") +
+      " " +
+      [d.getHours(), d.getMinutes(), d.getSeconds()].join(":")
+    );
+  };
+
+  getFullInfoStr(): string {
+    const full_card = {
+      stability: this.stability,
+      difficulty: this.difficulty,
+      elapsed_days: this.elapsed_days,
+      scheduled_days: this.scheduled_days,
+      reps: this.reps,
+      lapses: this.lapses,
+      state: this.state,
+      due: Math.round(this.due.getTime() / 1000),
+      last_review: Math.round(this.last_review.getTime() / 1000),
+      last_review_date: this.formatData(this.last_review),
+      due_date: this.formatData(this.due),
+    };
+    return JSON.stringify(full_card);
+  }
 }
 
 export class SchedulingInfo {
@@ -87,10 +112,10 @@ class SchedulingCards {
   easy: Card;
 
   constructor(card: Card) {
-    this.again = { ...card };
-    this.hard = { ...card };
-    this.good = { ...card };
-    this.easy = { ...card };
+    this.again = new Card(card);
+    this.hard = new Card(card);
+    this.good = new Card(card);
+    this.easy = new Card(card);
   }
 
   update_state(state: State) {

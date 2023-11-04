@@ -1,4 +1,4 @@
-import { useState, memo, useEffect, useCallback } from "react";
+import { useState, memo, useEffect, useCallback, ReactNode } from "react";
 import {
   InputNumber,
   Space,
@@ -10,15 +10,36 @@ import {
   Form,
 } from "antd";
 import type { MenuProps } from "antd";
+import InfoCard from './info'
 
 interface RightMenuProps {
   set_font_size_index_foo: () => void;
+  flush_now_card_foo: () => void
+  card_id: number
 }
 
 export default memo(function RightMenuView(props: RightMenuProps) {
   const rightItems: MenuProps["items"] = [
     {
-      key: "1",
+      key: "flushCard",
+      label: (
+        <Button
+          onClick={() => {
+            props.flush_now_card_foo();
+          }}
+        >
+          flushCard
+        </Button>
+      ),
+    },
+    {
+      key: "infoCard",
+      label: (
+        <InfoCard card_id={props.card_id} />
+      ),
+    },
+    {
+      key: "fontSize",
       label: (
         <Button
           onClick={() => {

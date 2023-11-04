@@ -10,11 +10,36 @@ import {
 export default class Table {
   constructor() { }
   test = async () => {
-    const cards = await this.prisma.$queryRaw`SELECT * FROM card where id=4273`;
-    const fsrs = await this.prisma
-      .$queryRaw`SELECT * FROM fsrs where card_id=4273`;
-    console.log(fsrs);
+    const cards = await this.prisma.$queryRaw`SELECT * FROM card where id=5001`;
     return cards ? cards[0] : undefined;
+  };
+
+  findAllFsrsByCard = async (card_id: number): Promise<FsrsField[]> => {
+    const query =
+      "SELECT * FROM fsrs where card_id=" +
+      card_id.toString() +
+      " order by due asc";
+    return await this.prisma.$queryRawUnsafe(query);
+  };
+
+  addMarkId = async (card_id: number, mark_id: number, due: number, info: string): Promise<void> => {
+    await this.prisma.fsrs.create({
+      data: {
+        card_id,
+        mark_id,
+        due,
+        info
+      }
+    })
+  }
+
+  findsTagByCardId = async (card_id: number): Promise<TagField[]> => {
+    const query =
+      "SELECT * FROM tag " +
+      " WHERE id IN ( SELECT tag_id FROM card_tag WHERE card_id = " +
+      card_id +
+      " )";
+    return await this.prisma.$queryRawUnsafe(query);
   };
 
   findFsrsByCardMark = async (
@@ -38,6 +63,12 @@ export default class Table {
     if (limit_num && limit_num != -1) {
       query = query + " LIMIT " + limit_num;
     }
+    return await this.prisma.$queryRawUnsafe(query);
+  };
+
+  jumpMinDueFsrs = async (card_id: number): Promise<FsrsField[]> => {
+    const query =
+      "SELECT * FROM fsrs where card_id=" + card_id + " order by due asc";
     return await this.prisma.$queryRawUnsafe(query);
   };
 
