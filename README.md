@@ -18,22 +18,22 @@ node>=18
 
 ## Todo
 
-[x] 字体修改
+    [x] 字体修改
 
-[x] 代码高亮
+    [x] 代码高亮
 
-[x] 打分
+    [x] 打分
 
-[x] 查询
+    [x] 查询
 
-[ ] 多选分支
+    [ ] 多选分支
 
-[ ] rand,new,review三种模式ratio
+    [ ] rand,new,review三种模式ratio
 
-[ ] 分支修改ratio
+    [ ] 分支修改ratio
 
-[ ] 搜索框命令？
+    [ ] 搜索框命令？
 
-[ ] 插入mark_id
+    [ ] 插入mark_id
 
-[ ] 夜间模式
+    [ ] 夜间模式
