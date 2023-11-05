@@ -15,19 +15,20 @@ import { findMinMissingNumber } from '../../tool'
 
 interface AddMarkProps {
   card: Card;
-  line_number_view: ReactNode
+  update_format_content_foo: (content: string) => void
 }
 
 export default memo(function AddMarkView(props: AddMarkProps) {
   const [isAddMarkModalOpen, setIsAddMarkModalOpen] = useState(false);
+  const [lineNumberMode, setLineNumberMode] = useState<boolean>(false);
 
   const formItemLayout = {
     labelCol: { span: 6 },
     wrapperCol: { span: 14 },
   };
 
-  const AddMarkModelView = () => {
-    return (
+  return (
+    <div>
       <Modal
         title="AddMark"
         open={isAddMarkModalOpen}
@@ -74,7 +75,23 @@ export default memo(function AddMarkView(props: AddMarkProps) {
           }}
           style={{ maxWidth: 600 }}
         >
-          {props.line_number_view}
+          <Button
+            onClick={() => {
+              if (!lineNumberMode) {
+                const nowFormatContent = props.card.content
+                const arr = nowFormatContent.split("\n")
+                let res = ""
+                const len = arr.length
+                for (let i = 0; i < len; i++) {
+                  res += "[" + i.toString() + "] " + arr[i]
+                }
+                res = res.replace(/\\n/g, "\n");
+                props.update_format_content_foo(res)
+              } else {
+                props.update_format_content_foo(props.card.content)
+              }
+              setLineNumberMode(res => !res)
+            }}>linenumber</Button>
           <Form.Item label="line_id">
             <Form.Item name="line_id">
               <InputNumber min={0} />
@@ -90,11 +107,6 @@ export default memo(function AddMarkView(props: AddMarkProps) {
           </Form.Item>
         </Form>
       </Modal>
-    );
-  };
-  return (
-    <div>
-      <AddMarkModelView />
       <Button
         type="primary"
         onClick={async () => {

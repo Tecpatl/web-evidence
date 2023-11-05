@@ -22,7 +22,6 @@ export default memo(function ContainerView() {
   const fontSizeList = [20, 30, 40];
   const [fontSizeIndex, setfontSizeIndex] = useState<number>(1);
   const [forceFlushIdx, setForceFlushIdx] = useState<number>(0);
-  const [lineNumberMode, setLineNumberMode] = useState<boolean>(false);
 
   const flushNextCardFoo = () => {
     findNextCard().then((res: any) => {
@@ -34,7 +33,7 @@ export default memo(function ContainerView() {
   };
 
   const flushNowCardFoo = () => {
-    setLineNumberMode(false)
+    setFormatContent(nowCard.content)
     if (!nowCard || !nowCard.id || nowCard.id < 0) {
       return
     }
@@ -64,25 +63,10 @@ export default memo(function ContainerView() {
     setFormatContent(nowFormatContent);
   };
 
-  const lineNumberView = () => (
-    <Button
-      onClick={() => {
-        if (!lineNumberMode) {
-          const nowFormatContent = nowCard.content
-          const arr = nowFormatContent.split("\n")
-          let res = ""
-          const len = arr.length
-          for (let i = 0; i < len; i++) {
-            res += "[" + i.toString() + "] " + arr[i]
-          }
-          res = res.replace(/\\n/g, "\n");
-          setFormatContent(res)
-        } else {
-          setFormatContent(nowCard.content)
-        }
-        setLineNumberMode(res => !res)
-      }}>linenumber</Button>
-  )
+
+  const updateFormatContent = (content: string) => {
+    setFormatContent(content)
+  }
 
   return (
     <div>
@@ -91,9 +75,7 @@ export default memo(function ContainerView() {
         card={nowCard}
         fresh_next_card_foo={flushNextCardFoo}
         replace_card_foo={replaceCardFoo}
-        line_number_view={
-          lineNumberView()
-        }
+        update_format_content_foo={updateFormatContent}
       />
       <RightMenuView
         card_id={nowCard ? nowCard.id : -1}

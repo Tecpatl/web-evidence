@@ -21,7 +21,7 @@ interface LeftMenuProps {
   fresh_next_card_foo: () => void;
   replace_card_foo: (card: Card) => void;
   force_flush_idx: number
-  line_number_view: ReactNode
+  update_format_content_foo: (content: string) => void
 }
 
 export default memo(function LeftMenuView(props: LeftMenuProps) {
@@ -50,7 +50,7 @@ export default memo(function LeftMenuView(props: LeftMenuProps) {
     },
     {
       key: "addMarkId",
-      label: <AddMarkIdView card={props.card} line_number_view={props.line_number_view} />
+      label: <AddMarkIdView card={props.card} update_format_content_foo={props.update_format_content_foo} />
     },
     {
       key: "searchCard",
