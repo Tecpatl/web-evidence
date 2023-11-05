@@ -89,7 +89,7 @@ export default class Table {
     select card.* from card
     join fsrs on fsrs.card_id=card.id
     where
-    fsrs.info NOT LIKE '%reps=0%'
+    fsrs.info NOT LIKE '%\"reps\":0%'
     ORDER BY fsrs.due ASC LIMIT ` + limit_num.toString();
     } else {
       let tag_str = "";
@@ -121,7 +121,7 @@ export default class Table {
         `
       )
     and
-    fsrs.info NOT LIKE '%reps=0%'
+    fsrs.info NOT LIKE '%\"reps\":0%'
     ORDER BY fsrs.due ASC LIMIT ` +
         limit_num.toString();
     }
