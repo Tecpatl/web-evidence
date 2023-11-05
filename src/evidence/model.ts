@@ -123,7 +123,7 @@ export default class Model {
       items = await this.getNewItem(select_tags, is_select_tag_and, true, 1);
       console.log("next new");
     }
-    if (!items) {
+    if (!items || items.length == 0) {
       items = await this.getRandomItem(select_tags, is_select_tag_and, true, 1);
       console.log("next random");
     }
@@ -166,7 +166,7 @@ export default class Model {
       tag_ids,
       is_and,
       limit_num,
-      "c.id in (select c2.id from card as c2 join fsrs on fsrs.card_id=c2.id where fsrs.info like '%reps=0%')",
+      "c.id in (select c2.id from card as c2 join fsrs on fsrs.card_id=c2.id where fsrs.info like '%\"reps\":0%')",
       true,
     );
     return item;
