@@ -1,6 +1,6 @@
 import useSWR, { mutate } from "swr";
 import { Todo } from "./types";
-import { Card, CardMethod, ScoreCardParam } from "./types";
+import { Card, NextCardRatioParam, CardMethod, ScoreCardParam } from "./types";
 
 const fetcher = (input: RequestInfo, init?: RequestInit) =>
   fetch(input, init).then((res) => res.json());
@@ -15,21 +15,37 @@ export const useCard = () => useSWR<Card>(cardPath, fetcher);
 
 export const useTests = () => useSWR<any[]>(testPath, fetcher);
 
-export const addMarkId = async (card_id: number, mark_id: number, content: string) => {
+export const addMarkId = async (
+  card_id: number,
+  mark_id: number,
+  content: string,
+) => {
   return await fetch(cardPath, {
     method: "POST",
-    body: JSON.stringify({ type: CardMethod.addMarkId, card_id, mark_id, content }),
+    body: JSON.stringify({
+      type: CardMethod.addMarkId,
+      card_id,
+      mark_id,
+      content,
+    }),
   }).then((res) => res.json());
-}
+};
+
+export const setNextCardRatio = async (ratioParam: NextCardRatioParam[]) => {
+  return await fetch(cardPath, {
+    method: "POST",
+    body: JSON.stringify({ type: CardMethod.setNextCardRatio, ratioParam }),
+  }).then((res) => res.json());
+};
 
 export const searchCard = async (keyword: string) => {
   return await fetch(cardPath, {
     method: "POST",
     body: JSON.stringify({ type: CardMethod.search, keyword }),
   }).then((res) => res.json());
-}
+};
 
-export const InfoCard = async (card_id: number)=> {
+export const InfoCard = async (card_id: number) => {
   return await fetch(cardPath, {
     method: "POST",
     body: JSON.stringify({ type: CardMethod.infoCard, card_id }),

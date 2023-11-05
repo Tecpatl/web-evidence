@@ -28,13 +28,13 @@ node>=18
 
    - [x] 打印卡片信息
 
-   - [ ] rand,new,review三种模式ratio
+   - [x] rand,new,review三种模式ratio
+
+   - [ ] 多选分支
 
    - [ ] 分支修改ratio
 
    - [ ] 搜索框命令？
 
    - [ ] 夜间模式
-
-   - [ ] 多选分支
 
