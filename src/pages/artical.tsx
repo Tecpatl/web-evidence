@@ -35,7 +35,7 @@ export default memo(function ArticalView(props: ArticalProps) {
 
   useEffect(() => {
     jumpToMarkId()
-  }, [markId?.toString() + props.mark_id?.toString() + props.force_flush_idx.toString()])
+  }, [markId?.toString() + props.mark_id?.toString() + props.force_flush_idx?.toString()])
 
   useEffect(() => {
     if (!props.content) {
@@ -48,7 +48,7 @@ export default memo(function ArticalView(props: ArticalProps) {
     const len = splittedContent.length
     let mark_str = ""
     if (props.mark_id != undefined) {
-      mark_str = "======{[" + props.mark_id.toString() + "]}======";
+      mark_str = "======{[" + props.mark_id?.toString() + "]}======";
     }
     for (let i = 0; i < len; i++) {
       const str = splittedContent[i]
