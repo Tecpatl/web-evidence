@@ -6,6 +6,7 @@ import {
   NextCardMode,
   FsrsField,
   InfoCardField,
+  NextCardField,
 } from "../types";
 
 export default class Evidence {
@@ -29,14 +30,23 @@ export default class Evidence {
     ];
   }
 
+  setNextCardRatio = (id: NextCardMode, value: number) => {
+    this.next_card_ratio = this.next_card_ratio.map(item => {
+      if (item.id == id) {
+        item.value = value
+      }
+      return item
+    })
+  };
+
   test = async () => {
     return await this.model.test();
   };
 
   addMarkId = async (card_id: number, mark_id: number, content: string) => {
-    await this.model.addMarkId(card_id, mark_id)
-    await this.model.editCardContent(card_id, content)
-  }
+    await this.model.addMarkId(card_id, mark_id);
+    await this.model.editCardContent(card_id, content);
+  };
 
   getInfoCard = async (card_id: number): Promise<InfoCardField> => {
     const fsrs_items = await this.model.findAllFsrsByCard(card_id);
@@ -59,10 +69,9 @@ export default class Evidence {
     return await this.model.findCardById(card_id);
   };
 
-  findNextCard = async (): Promise<Card | undefined> => {
+  findNextCard = async (): Promise<NextCardField> => {
     //todo user select tag
     let now_select_tags = [];
-    let items;
     if (true) {
       let son_items = await this.model.findSonTags(-1);
       now_select_tags = this.model.getIdsFromItem(son_items);
@@ -72,15 +81,12 @@ export default class Evidence {
 
     //auto
     //todo mode
-    items = await this.model.calcNextList(
+    const res = await this.model.calcNextList(
       [now_select_tag],
       false,
       this.next_card_ratio,
     );
-
-    if (items && items.length > 0) {
-      return items[0];
-    }
+    return res;
   };
 
   searchCard = async (content: string, lim?: number): Promise<Card[]> => {

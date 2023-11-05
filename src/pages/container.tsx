@@ -1,6 +1,6 @@
 import { useState, memo, useEffect, useRef } from "react";
 import { findCardById, findNextCard, scoreCard } from "../api";
-import { Card, FsrsField } from "../types";
+import { Card, FsrsField, NextCardMode } from "../types";
 import {
   InputNumber,
   Space,
@@ -10,6 +10,7 @@ import {
   FloatButton,
   Radio,
   Form,
+  message,
 } from "antd";
 import LeftMenuView from "./left_menu/index";
 import RightMenuView from "./right_menu/index";
@@ -22,27 +23,45 @@ export default memo(function ContainerView() {
   const fontSizeList = [20, 30, 40];
   const [fontSizeIndex, setfontSizeIndex] = useState<number>(1);
   const [forceFlushIdx, setForceFlushIdx] = useState<number>(0);
+  const [messageApi, contextHolder] = message.useMessage();
 
   const flushNextCardFoo = () => {
     findNextCard().then((res: any) => {
-      const card = res.card as Card;
+      const card = res.next_card.card as Card;
+      const next_card_mode = res.next_card.next_card_mode as NextCardMode;
+      let next_card_mode_msg = "auto";
+      switch (next_card_mode) {
+        case NextCardMode.new: {
+          next_card_mode_msg = "NewCard";
+          break;
+        }
+        case NextCardMode.rand: {
+          next_card_mode_msg = "RandCard";
+          break;
+        }
+        case NextCardMode.review: {
+          next_card_mode_msg = "ReviewCard";
+          break;
+        }
+      }
+      messageApi.info(next_card_mode_msg);
       const fsrs_item = res.fsrs_item as FsrsField;
       replaceCardFoo(card);
-      setNowFsrs(fsrs_item)
+      setNowFsrs(fsrs_item);
     });
   };
 
   const flushNowCardFoo = () => {
-    setFormatContent(nowCard.content)
+    setFormatContent(nowCard.content);
     if (!nowCard || !nowCard.id || nowCard.id < 0) {
-      return
+      return;
     }
     findCardById(nowCard.id).then((res: any) => {
       const card = res.card as Card;
       const fsrs_item = res.fsrs_item as FsrsField;
       replaceCardFoo(card);
-      setNowFsrs(fsrs_item)
-      setForceFlushIdx((forceFlushIdx) => forceFlushIdx + 1)
+      setNowFsrs(fsrs_item);
+      setForceFlushIdx((forceFlushIdx) => forceFlushIdx + 1);
     });
   };
 
@@ -53,23 +72,23 @@ export default memo(function ContainerView() {
   const replaceCardFoo = (card: Card) => {
     if (!card || !card.content) {
       setFormatContent("");
-      setNowCard(null)
-      setNowFsrs(null)
+      setNowCard(null);
+      setNowFsrs(null);
       return;
     }
     let nowFormatContent = card.content;
-    setNowCard(card)
+    setNowCard(card);
     nowFormatContent = nowFormatContent.replace(/\\n/g, "\n");
     setFormatContent(nowFormatContent);
   };
 
-
   const updateFormatContent = (content: string) => {
-    setFormatContent(content)
-  }
+    setFormatContent(content);
+  };
 
   return (
     <div>
+      {contextHolder}
       <LeftMenuView
         force_flush_idx={forceFlushIdx}
         card={nowCard}

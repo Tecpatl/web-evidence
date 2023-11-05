@@ -1,5 +1,12 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { Card, CardMethod, ScoreCardParam } from "../../types";
+import {
+  Card,
+  CardMethod,
+  NextCardMode,
+  NextCardRatioParam,
+  ScoreCardParam,
+  NextCardField,
+} from "../../types";
 import Evidence from "../../evidence";
 
 const Evi = new Evidence();
@@ -8,21 +15,36 @@ const Evi = new Evidence();
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === "GET") {
-    const card = await Evi.findNextCard();
+    const next_card = await Evi.findNextCard();
     // const card = await Evi.test();
     let fsrs_item;
-    if (card && card.id) {
-      fsrs_item = await Evi.jumpMinDueFsrs(card.id);
+    if (next_card && next_card.card && next_card.card.id) {
+      fsrs_item = await Evi.jumpMinDueFsrs(next_card.card.id);
     }
     // res.json({ card, fsrs_item: { mark_id: 1 }, is_ok: card ? true : false });
-    res.json({ card, fsrs_item, is_ok: card ? true : false });
+    res.json({
+      next_card,
+      fsrs_item,
+      is_ok: next_card && next_card.card ? true : false,
+    });
   } else if (req.method === "POST") {
     const data = JSON.parse(req.body);
     switch (data.type as CardMethod) {
+      case CardMethod.setNextCardRatio: {
+        if (!data.ratioParam) {
+          res.json({ is_ok: false });
+          return;
+        }
+        data.ratioParam.forEach((param: NextCardRatioParam) => {
+          Evi.setNextCardRatio(param.id, param.value);
+        });
+        res.json({ is_ok: true });
+        return;
+      }
       case CardMethod.addMarkId: {
         if (!data.card_id || !data.mark_id || !data.content) {
           res.json({ is_ok: false });
-          return
+          return;
         }
         await Evi.addMarkId(data.card_id, data.mark_id, data.content);
         res.json({ is_ok: true });
@@ -31,7 +53,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       case CardMethod.infoCard: {
         if (!data.card_id) {
           res.json({ is_ok: false });
-          return
+          return;
         }
         const info = await Evi.getInfoCard(data.card_id);
         res.json({ info, is_ok: true });

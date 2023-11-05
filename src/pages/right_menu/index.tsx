@@ -10,7 +10,8 @@ import {
   Form,
 } from "antd";
 import type { MenuProps } from "antd";
-import InfoCard from './info'
+import InfoCardView from './info'
+import NextRatioView from './nextRatio'
 
 interface RightMenuProps {
   set_font_size_index_foo: () => void;
@@ -35,7 +36,13 @@ export default memo(function RightMenuView(props: RightMenuProps) {
     {
       key: "infoCard",
       label: (
-        <InfoCard card_id={props.card_id} />
+        <InfoCardView card_id={props.card_id} />
+      ),
+    },
+    {
+      key: "nextCardRatio",
+      label: (
+        <NextRatioView card_id={props.card_id} />
       ),
     },
     {

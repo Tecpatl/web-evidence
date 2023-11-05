@@ -22,16 +22,21 @@ export default class Table {
     return await this.prisma.$queryRawUnsafe(query);
   };
 
-  addMarkId = async (card_id: number, mark_id: number, due: number, info: string): Promise<void> => {
+  addMarkId = async (
+    card_id: number,
+    mark_id: number,
+    due: number,
+    info: string,
+  ): Promise<void> => {
     await this.prisma.fsrs.create({
       data: {
         card_id,
         mark_id,
         due,
-        info
-      }
-    })
-  }
+        info,
+      },
+    });
+  };
 
   findsTagByCardId = async (card_id: number): Promise<TagField[]> => {
     const query =
@@ -156,6 +161,47 @@ export default class Table {
       query += " order by random()%1000 ";
     }
     if (limit_num && limit_num != -1) {
+      query += " LIMIT " + limit_num;
+    }
+    return await this.prisma.$queryRawUnsafe(query);
+  };
+
+  findCardWithTags = async (
+    tag_ids: number[],
+    is_and: boolean,
+    limit_num: number,
+    statement: string,
+    is_shuffle: boolean,
+  ): Promise<Card[]> => {
+    if (tag_ids.length == 0) {
+      return this.findCard(limit_num, statement, is_shuffle);
+    }
+    let tag_str = "";
+    const cnt = tag_ids.length;
+    tag_ids.forEach((val, key) => {
+      if (tag_str != "") {
+        tag_str += ",";
+      }
+      tag_str += val;
+    });
+    let query =
+      "SELECT c.* FROM card " +
+      " AS c JOIN card_tag " +
+      " AS ct ON c.id = ct.card_id JOIN tag " +
+      " AS t ON ct.tag_id = t.id WHERE t.id IN (" +
+      tag_str +
+      ") ";
+    if (statement != "") {
+      query += " AND " + statement;
+    }
+    query += " GROUP BY c.id ";
+    if (is_and) {
+      query += " HAVING COUNT(DISTINCT t.id) = " + cnt;
+    }
+    if (is_shuffle == true) {
+      query += " order by random()%1000 ";
+    }
+    if (limit_num != -1) {
       query += " LIMIT " + limit_num;
     }
     return await this.prisma.$queryRawUnsafe(query);

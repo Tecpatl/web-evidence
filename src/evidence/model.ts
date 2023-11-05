@@ -4,6 +4,7 @@ import {
   NextCardRatioField,
   NextCardMode,
   FsrsField,
+  NextCardField,
 } from "../types";
 import Table from "./table";
 import { getValArrayFromItem, randomNum } from "../tool";
@@ -92,8 +93,8 @@ export default class Model {
     select_tags: number[],
     is_select_tag_and: boolean,
     next_card_ratio: NextCardRatioField[],
-  ): Promise<Card> => {
-    let item;
+  ): Promise<NextCardField> => {
+    let items;
 
     let now_mode = NextCardMode.rand;
     let sum = 0;
@@ -115,17 +116,59 @@ export default class Model {
       }
     }
 
-    //    if (now_mode == NextCardMode.review) {
-    item = await this.getMinDueItem(select_tags, is_select_tag_and, true, 1);
-    console.log("next review");
-    //   } else if (now_mode == NextCardMode.new) {
-    //     item = await this.getNewItem(select_tags, is_select_tag_and, true, 1);
-    //     console.log("next new");
-    //   }
-    //   if (!item) {
-    //     item = await this.getRandomItem(select_tags, is_select_tag_and, true, 1);
-    //     console.log("next random");
-    //   }
+    if (now_mode == NextCardMode.review) {
+      items = await this.getMinDueItem(select_tags, is_select_tag_and, true, 1);
+      console.log("next review");
+    } else if (now_mode == NextCardMode.new) {
+      items = await this.getNewItem(select_tags, is_select_tag_and, true, 1);
+      console.log("next new");
+    }
+    if (!items) {
+      items = await this.getRandomItem(select_tags, is_select_tag_and, true, 1);
+      console.log("next random");
+    }
+    let card;
+    if (items && items.length > 0) {
+      card = items[0];
+    }
+    return { card, next_card_mode: now_mode };
+  };
+
+  getRandomItem = async (
+    tag_ids: number[],
+    is_and: boolean,
+    contain_son: boolean,
+    limit_num: number,
+  ): Promise<Card[]> => {
+    if (contain_son == true && is_and == false) {
+      tag_ids = await this.findAllSonTags(tag_ids);
+    }
+    const item = this.tbl.findCardWithTags(
+      tag_ids,
+      is_and,
+      limit_num,
+      "",
+      true,
+    );
+    return item;
+  };
+
+  getNewItem = async (
+    tag_ids: number[],
+    is_and: boolean,
+    contain_son: boolean,
+    limit_num?: number,
+  ): Promise<Card[]> => {
+    if (contain_son == true && is_and == false) {
+      tag_ids = await this.findAllSonTags(tag_ids);
+    }
+    const item = await this.tbl.findCardWithTags(
+      tag_ids,
+      is_and,
+      limit_num,
+      "c.id in (select c2.id from card as c2 join fsrs on fsrs.card_id=c2.id where fsrs.info like '%reps=0%')",
+      true,
+    );
     return item;
   };
 
@@ -236,12 +279,17 @@ export default class Model {
   addMarkId = async (card_id: number, mark_id: number): Promise<void> => {
     const card = new _Card_();
     const info = card.getFullInfoStr();
-    await this.tbl.addMarkId(card_id, mark_id, Math.round(card.due.getTime() / 1000), info)
-  }
+    await this.tbl.addMarkId(
+      card_id,
+      mark_id,
+      Math.round(card.due.getTime() / 1000),
+      info,
+    );
+  };
 
   editCardContent = async (card_id: number, content: string): Promise<void> => {
-    this.tbl.editCard(card_id, { content })
-  }
+    this.tbl.editCard(card_id, { content });
+  };
 
   private tbl = new Table();
   private parameter_: _Params_;

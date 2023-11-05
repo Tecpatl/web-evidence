@@ -42,7 +42,8 @@ export enum CardMethod {
   search,
   findCardById,
   infoCard,
-  addMarkId
+  setNextCardRatio,
+  addMarkId,
 }
 
 export interface ScoreCardParam {
@@ -62,4 +63,14 @@ export interface FsrsField {
 export interface InfoCardField {
   fsrs_items: FsrsField[];
   tags: TagField[];
+}
+
+export interface NextCardRatioParam {
+  id: NextCardMode;
+  value: number;
+}
+
+export interface NextCardField {
+  card: Card;
+  next_card_mode: NextCardMode;
 }

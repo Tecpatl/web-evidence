@@ -1,5 +1,5 @@
 import { useState, memo, useEffect, useCallback, ReactNode } from "react";
-import { findNextCard, InfoCard, addMarkId } from "../../api";
+import { InfoCard, addMarkId } from "../../api";
 import { Card, InfoCardField } from '../../types'
 import {
   InputNumber,
