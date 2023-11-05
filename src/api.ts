@@ -15,12 +15,33 @@ export const useCard = () => useSWR<Card>(cardPath, fetcher);
 
 export const useTests = () => useSWR<any[]>(testPath, fetcher);
 
-export const searchCard = async (keyword:string) => {
+export const addMarkId = async (card_id: number, mark_id: number, content: string) => {
+  return await fetch(cardPath, {
+    method: "POST",
+    body: JSON.stringify({ type: CardMethod.addMarkId, card_id, mark_id, content }),
+  }).then((res) => res.json());
+}
+
+export const searchCard = async (keyword: string) => {
   return await fetch(cardPath, {
     method: "POST",
     body: JSON.stringify({ type: CardMethod.search, keyword }),
   }).then((res) => res.json());
 }
+
+export const InfoCard = async (card_id: number)=> {
+  return await fetch(cardPath, {
+    method: "POST",
+    body: JSON.stringify({ type: CardMethod.infoCard, card_id }),
+  }).then((res) => res.json());
+};
+
+export const findCardById = async (card_id: number) => {
+  return await fetch(cardPath, {
+    method: "POST",
+    body: JSON.stringify({ type: CardMethod.findCardById, card_id }),
+  }).then((res) => res.json());
+};
 
 export const scoreCard = async (param: ScoreCardParam) => {
   return await fetch(cardPath, {
@@ -29,7 +50,7 @@ export const scoreCard = async (param: ScoreCardParam) => {
   }).then((res) => res.json());
 };
 
-export const nextCard = async () => {
+export const findNextCard = async () => {
   return await fetch(cardPath, {
     method: "GET",
   }).then((res) => res.json());

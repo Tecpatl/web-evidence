@@ -1,25 +1,17 @@
 import { useState, memo, useEffect, useCallback } from "react";
-import { searchCard, nextCard, scoreCard } from "../../api";
+import { searchCard, findNextCard, scoreCard } from "../../api";
 import { Card } from "../../types";
 import {
-  InputNumber,
-  Space,
   Modal,
   Button,
-  Dropdown,
-  FloatButton,
-  Radio,
-  Form,
-  Input,
   Select,
 } from "antd";
 import MarkdownView from "../markdown";
-import type { SelectProps, MenuProps } from "antd";
-const { Search } = Input;
-const { Option } = Select;
+import type { SelectProps } from "antd";
 
 interface SearchCardProps {
   replace_card_foo: (card: Card) => void;
+  force_flush_idx: number
 }
 
 let currentValue = "";
@@ -128,7 +120,8 @@ export default memo(function SearchCardView(props: SearchCardProps) {
         >
           submit
         </Button>
-        <MarkdownView content={content} font_size={15} />
+        <MarkdownView
+          content={content} font_size={15} />
       </Modal>
       <Button
         type="primary"

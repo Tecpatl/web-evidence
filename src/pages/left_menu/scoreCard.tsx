@@ -1,5 +1,5 @@
 import { useState, memo, useEffect, useCallback } from "react";
-import { nextCard, scoreCard } from "../../api";
+import { findNextCard, scoreCard } from "../../api";
 import {
   InputNumber,
   Space,
@@ -10,21 +10,15 @@ import {
   Radio,
   Form,
 } from "antd";
-import type { MenuProps } from "antd";
+import { Card } from "../../types";
 
 interface ScoreCardProps {
-  card_id: number;
+  card: Card;
   fresh_next_card_foo: () => void;
 }
 
 export default memo(function ScoreCardView(props: ScoreCardProps) {
   const [isScoreModalOpen, setIsScoreModalOpen] = useState(false);
-  const [cardId, setCardId] = useState<number>(-1);
-
-  useEffect(() => {
-    console.log(props.card_id)
-    setCardId(props.card_id);
-  }, [props.card_id]);
 
   const formItemLayout = {
     labelCol: { span: 6 },
@@ -47,7 +41,7 @@ export default memo(function ScoreCardView(props: ScoreCardProps) {
           onFinish={async (values: { mark_id: number; rating: number }) => {
             setIsScoreModalOpen(false);
             await scoreCard({
-              card_id: cardId,
+              card_id: props.card.id,
               mark_id: values.mark_id,
               rating: values.rating,
             });
@@ -95,7 +89,7 @@ export default memo(function ScoreCardView(props: ScoreCardProps) {
       <Button
         type="primary"
         onClick={async () => {
-          if (cardId != -1) {
+          if (props.card?.id) {
             setIsScoreModalOpen(true);
           }
         }}

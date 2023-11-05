@@ -40,6 +40,9 @@ export enum CardMethod {
   next,
   fresh,
   search,
+  findCardById,
+  infoCard,
+  addMarkId
 }
 
 export interface ScoreCardParam {
@@ -54,4 +57,9 @@ export interface FsrsField {
   mark_id: number;
   due: number;
   info: string;
+}
+
+export interface InfoCardField {
+  fsrs_items: FsrsField[];
+  tags: TagField[];
 }

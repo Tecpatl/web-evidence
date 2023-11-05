@@ -1,5 +1,5 @@
-import { useState, memo, useEffect, useCallback } from "react";
-import { nextCard, scoreCard } from "../../api";
+import { useState, memo, useEffect, useCallback, ReactNode } from "react";
+import { findNextCard, scoreCard } from "../../api";
 import {
   InputNumber,
   Space,
@@ -14,32 +14,29 @@ import type { MenuProps } from "antd";
 import ScoreCardlView from "./scoreCard";
 import SearchCardlView from "./searchCard";
 import { Card } from "../../types";
+import AddMarkIdView from './addMark'
 
 interface LeftMenuProps {
-  card_id: number;
+  card: Card;
   fresh_next_card_foo: () => void;
   replace_card_foo: (card: Card) => void;
+  force_flush_idx: number
+  line_number_view: ReactNode
 }
 
 export default memo(function LeftMenuView(props: LeftMenuProps) {
-  const [cardId, setCardId] = useState<number>(-1);
-
-  useEffect(() => {
-    setCardId(props.card_id);
-  }, [props.card_id]);
-
   const leftItems: MenuProps["items"] = [
     {
       key: "scoreCard",
       label: (
         <ScoreCardlView
-          card_id={cardId}
+          card={props.card}
           fresh_next_card_foo={props.fresh_next_card_foo}
         />
       ),
     },
     {
-      key: "nextCard",
+      key: "findNextCard",
       label: (
         <Button
           type="primary"
@@ -47,13 +44,19 @@ export default memo(function LeftMenuView(props: LeftMenuProps) {
             props.fresh_next_card_foo();
           }}
         >
-          nextCard
+          findNextCard
         </Button>
       ),
     },
     {
+      key: "addMarkId",
+      label: <AddMarkIdView card={props.card} line_number_view={props.line_number_view} />
+    },
+    {
       key: "searchCard",
-      label: <SearchCardlView replace_card_foo={props.replace_card_foo} />,
+      label: <SearchCardlView
+        force_flush_idx={props.force_flush_idx}
+        replace_card_foo={props.replace_card_foo} />,
     },
   ];
 
