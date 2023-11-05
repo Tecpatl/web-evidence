@@ -44,8 +44,8 @@ export default memo(function ContainerView() {
           break;
         }
       }
-      messageApi.info(next_card_mode_msg);
       const fsrs_item = res.fsrs_item as FsrsField;
+      messageApi.info(next_card_mode_msg + " mark_id:" + fsrs_item.mark_id);
       replaceCardFoo(card);
       setNowFsrs(fsrs_item);
     });
