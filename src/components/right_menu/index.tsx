@@ -12,6 +12,7 @@ import {
 import type { MenuProps } from "antd";
 import InfoCardView from './info'
 import NextRatioView from './nextRatio'
+import { signOut } from "next-auth/react";
 
 interface RightMenuProps {
   set_font_size_index_foo: () => void;
@@ -54,6 +55,18 @@ export default memo(function RightMenuView(props: RightMenuProps) {
           }}
         >
           fontSize
+        </Button>
+      ),
+    },
+    {
+      key: "logout",
+      label: (
+        <Button
+          onClick={() => {
+            signOut()
+          }}
+        >
+          logout
         </Button>
       ),
     },

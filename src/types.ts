@@ -1,10 +1,3 @@
-export interface Todo {
-  id: string;
-  created: string;
-  text: string;
-  completed: boolean;
-}
-
 export interface CardField {
   id: number;
   content: string;
