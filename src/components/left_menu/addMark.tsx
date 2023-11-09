@@ -83,7 +83,7 @@ export default memo(function AddMarkView(props: AddMarkProps) {
                 let res = ""
                 const len = arr.length
                 for (let i = 0; i < len; i++) {
-                  res += "[" + i.toString() + "] " + arr[i]
+                  res += arr[i] + " [" + i.toString() + "] \n"
                 }
                 res = res.replace(/\\n/g, "\n");
                 props.update_format_content_foo(res)
