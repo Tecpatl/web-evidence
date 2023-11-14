@@ -95,6 +95,7 @@ export default memo(function ContainerView() {
         fresh_next_card_foo={flushNextCardFoo}
         replace_card_foo={replaceCardFoo}
         update_format_content_foo={updateFormatContent}
+        flush_now_card_foo={flushNowCardFoo}
       />
       <RightMenuView
         card_id={nowCard ? nowCard.id : -1}

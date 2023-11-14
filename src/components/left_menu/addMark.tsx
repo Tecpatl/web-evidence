@@ -1,6 +1,6 @@
 import { useState, memo, useEffect, useCallback, ReactNode } from "react";
 import { InfoCard, addMarkId } from "../../api";
-import { Card, InfoCardField } from '../../types'
+import { Card, InfoCardField } from "../../types";
 import {
   InputNumber,
   Space,
@@ -11,11 +11,12 @@ import {
   Radio,
   Form,
 } from "antd";
-import { findMinMissingNumber } from '../../tool'
+import { findMinMissingNumber } from "../../tool";
 
 interface AddMarkProps {
   card: Card;
-  update_format_content_foo: (content: string) => void
+  update_format_content_foo: (content: string) => void;
+  flush_now_card_foo: () => void;
 }
 
 export default memo(function AddMarkView(props: AddMarkProps) {
@@ -40,35 +41,37 @@ export default memo(function AddMarkView(props: AddMarkProps) {
         <Form
           name="validate_other"
           {...formItemLayout}
-          onFinish={async (values: { line_id: number; }) => {
+          onFinish={async (values: { line_id: number }) => {
             if (!props.card || !props.card.id) {
-              return
+              return;
             }
             setIsAddMarkModalOpen(false);
-            console.log("mark_id:", values.line_id)
+            console.log("mark_id:", values.line_id);
 
-            const cardInfo = (await InfoCard(props.card.id))?.info as InfoCardField
+            const cardInfo = (await InfoCard(props.card.id))
+              ?.info as InfoCardField;
             if (!cardInfo || !cardInfo.fsrs_items) {
-              return
+              return;
             }
-            const mark_ids = []
-            const fsrs_items = cardInfo.fsrs_items
+            const mark_ids = [];
+            const fsrs_items = cardInfo.fsrs_items;
             fsrs_items.forEach((v) => {
-              mark_ids.push(v.mark_id)
-            })
-            const new_mark_id = findMinMissingNumber(mark_ids)
-            const nowFormatContent = props.card.content
-            const arr = nowFormatContent.split("\n")
-            let res = ""
-            const len = arr.length
+              mark_ids.push(v.mark_id);
+            });
+            const new_mark_id = findMinMissingNumber(mark_ids);
+            const nowFormatContent = props.card.content;
+            const arr = nowFormatContent.split("\n");
+            let res = "";
+            const len = arr.length;
             for (let i = 0; i < len; i++) {
               if (i + 1 == values.line_id) {
-                res += `\n======{[${new_mark_id}]}======\n`
+                res += `\n======{[${new_mark_id}]}======\n`;
               } else {
-                res += `${arr[i]}\n`
+                res += `${arr[i]}\n`;
               }
             }
-            await addMarkId(props.card.id, new_mark_id, res)
+            await addMarkId(props.card.id, new_mark_id, res);
+            props.flush_now_card_foo()
           }}
           initialValues={{
             mark_id: 0,
@@ -78,20 +81,23 @@ export default memo(function AddMarkView(props: AddMarkProps) {
           <Button
             onClick={() => {
               if (!lineNumberMode) {
-                const nowFormatContent = props.card.content
-                const arr = nowFormatContent.split("\n")
-                let res = ""
-                const len = arr.length
+                const nowFormatContent = props.card.content;
+                const arr = nowFormatContent.split("\n");
+                let res = "";
+                const len = arr.length;
                 for (let i = 0; i < len; i++) {
-                  res += arr[i] + " [" + i.toString() + "]   \n"
+                  res += arr[i] + " [" + i.toString() + "]   \n";
                 }
                 res = res.replace(/\\n/g, "\n");
-                props.update_format_content_foo(res)
+                props.update_format_content_foo(res);
               } else {
-                props.update_format_content_foo(props.card.content)
+                props.update_format_content_foo(props.card.content);
               }
-              setLineNumberMode(res => !res)
-            }}>linenumber</Button>
+              setLineNumberMode((res) => !res);
+            }}
+          >
+            linenumber
+          </Button>
           <Form.Item label="line_id">
             <Form.Item name="line_id">
               <InputNumber min={0} />
